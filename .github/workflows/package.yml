@@ -1,0 +1,26 @@
+name: Build managed extension package
+on:
+  workflow_dispatch:
+    inputs:
+      api_base:
+        description: HTTPS Supabase function base URL (public; no secret)
+        required: true
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/*.test.mjs
+      - name: Build ZIP
+        env:
+          API_BASE: ${{ inputs.api_base }}
+        run: python3 scripts/package.py --api-base "$API_BASE" --output gptyar-4.6.6.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gptyar-4.6.6
+          path: gptyar-4.6.6.zip

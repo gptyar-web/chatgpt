@@ -1,0 +1,3 @@
+.test-package-*/
+*.log
+__pycache__/
